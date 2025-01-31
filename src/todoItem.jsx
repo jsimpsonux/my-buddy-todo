@@ -4,7 +4,7 @@ function TodoItem({ addTask }) {
     const [task, setTask] = useState("");
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (task === "") return;
+        if (task.trim() === "") return;
         addTask(task);
         setTask("");
     };
