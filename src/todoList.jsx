@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import TodoItem from "./todoItem";
+import MotivationalQuote from "./api/zenquotes";
 
 function TodoList() {
     const [task, setTask] = useState([]);
@@ -23,10 +24,11 @@ function TodoList() {
         <div>
             <h2>My To-Do List</h2>
             <TodoItem addTask={addTask} />
+            <MotivationalQuote />
             <ul>
                 {task.map((tasks, index) => {
                     const isCompleted = completed.includes(index);
-                    const taskColour = isCompleted ? { color: "green" } : { color: "black" };
+                    const taskColour = isCompleted ? { color: "green", textDecoration: "line-through"} : { color: "black" };
 
                     return (
                         <li key={index} style={taskColour}>
