@@ -1,0 +1,39 @@
+.todo-list {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    flex-direction: column;
+    background-color: #bbdefb;
+    height: 100%;
+    padding: 15px;
+    gap: 15px;
+}
+
+.todo-list > div {
+    background: #ffecb3;
+    border: 3px solid #ffcc80;
+    border-radius: 5px;
+    padding: 8px;
+}
+
+.items {
+    list-style: none;
+    padding: 50px;
+    margin: 0;
+}
+
+li {
+    padding: 5px;
+}
+
+.progress-bar {
+   width: 100%;
+   background-color: #eee;
+}
+  
+  
+.progress-bar-completed {
+   height: 20px;
+   background-color: pink;
+   transition: width 0.5s ease-in-out;
+}

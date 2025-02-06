@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TodoItem from "./todoItem";
-import MotivationalQuote from "./api/zenquotes";
+import './todoList.css';
+import MotivationalQuote from "../api/zenquotes";
 
 function TodoList() {
     const [task, setTask] = useState([]);
@@ -20,12 +21,37 @@ function TodoList() {
         );
     };
 
+    // const LevelUp = (index) => {
+    //     const [progress, setProgress] = useState(0);
+    //     const taskCompleted = completed.includes(index);
+    //     if (taskCompleted) {
+    //         setProgress(progress + 10);
+    //     }
+    // }
+
+    const ProgressBar = ({ completed, task }) => {
+        const [progress, setProgress] = useState(0);
+    
+        useEffect(() => {
+            setProgress((completed.length / task) * 100);
+        }, [completed, task]);
+    
+        return (
+            <div className="progress-container">
+                <div className="progress-bar" style={{ width: `100%` }}>
+                    {completed.length}/{task} Completed
+                </div>
+            </div>
+        );
+    };
+
     return (
-        <div>
+        <div className="todo-list">
             <h2>My To-Do List</h2>
+            <ProgressBar/>
             <TodoItem addTask={addTask} />
             <MotivationalQuote />
-            <ul>
+            <ul className="items">
                 {task.map((tasks, index) => {
                     const isCompleted = completed.includes(index);
                     const taskColour = isCompleted ? { color: "green", textDecoration: "line-through"} : { color: "black" };

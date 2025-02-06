@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import './todoItem.css';
 
 function TodoItem({ addTask }) {
     const [task, setTask] = useState("");

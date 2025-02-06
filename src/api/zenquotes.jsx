@@ -8,7 +8,7 @@ function MotivationalQuote() {
       try {
         const response = await fetch("https://api.api-ninjas.com/v1/quotes", {
             headers: {
-                "X-Api-Key": process.env.API_QUOTE_NINJA_KEY
+                "X-Api-Key": process.env.REACT_APP_API_KEY
             }
         });
 
@@ -37,7 +37,7 @@ function MotivationalQuote() {
 
     return (
         <div>
-            <h3>Motivational Quote</h3>
+            <h3>Quote Buddy</h3>
             <p>"{quote}"</p>
             <p>- {author}</p>
         </div>
@@ -45,5 +45,4 @@ function MotivationalQuote() {
 }
 
 export default MotivationalQuote;
-
 
