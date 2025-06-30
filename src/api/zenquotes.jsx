@@ -19,7 +19,7 @@ function MotivationalQuote() {
             const data = await response.json();
             setQuote(data[0].quote);
             setAuthor(data[0].author);
-            console.log(data[0]);
+            // console.log(data[0]);
         } catch (error) {
             console.error("Error fetching the quote:", error);
         }
