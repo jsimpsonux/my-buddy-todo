@@ -1,14 +1,13 @@
 import React, { useState, useEffect, use } from "react";
 import TodoItem from "./todoItem";
 import "./todoList.css";
+import artcat from "../assets/artcat.gif";
 
 function TodoList() {
   const [task, setTask] = useState([]);
   const [completed, setCompleted] = useState([]);
   const [progress, setProgress] = useState(0);
   const [hasReachedFive, setHasReachedFive] = useState(false);
-//   const [level, setLevel] = useState(0);
-//   const [levelUp, setLevelUp] = useState(false);
 
   const addTask = (newTask) => {
     setTask([...task, newTask]);
@@ -58,23 +57,28 @@ function TodoList() {
   };
 
   const Experience = ({ completed = [] }) => {
+    const [experience, setExperience] = useState(0);
     const [level, setLevel] = useState(0);
     const [levelUp, setLevelUp] = useState(false);
 
+    console.log(experience);
+    console.log(level);
+
     useEffect(() => {
       if (completed.length > 0) {
-        setLevel(completed.length / 5 + 10);
+        setExperience(completed.length * 10);
       } else {
-        setLevel(0);
+        setExperience(0);
       }
     }, [completed]);
 
-    // useEffect(() => {
-    // if (level >= completed.length / 5 + 10 && !levelUp) {
-    //   setLevelUp(true);
-    //   setLevel(0);
-    // }
-    // }, [completed, level]);
+    useEffect(() => {
+      if (experience > 100 && !levelUp) {
+        setLevelUp(true);
+        setLevel((prevlevel) => prevlevel + 1);
+        setExperience((prevExperience) => prevExperience - completed.length);
+      }
+    }, [completed, level, experience, levelUp]);
 
     return (
       <div
@@ -99,7 +103,22 @@ function TodoList() {
         <div
           style={{ textAlign: "center", marginTop: "5px", fontWeight: "bold" }}
         >
-          {completed.length}
+          {level}
+        </div>
+        <div
+          className="progress-bar"
+          style={{
+            width: `${experience}%`,
+            height: "20px",
+            background: "green",
+            borderRadius: "10px",
+            transition: "width 0.5s ease-in-out",
+          }}
+        />
+        <div
+          style={{ textAlign: "center", marginTop: "5px", fontWeight: "bold" }}
+        >
+          {experience}
         </div>
       </div>
     );
@@ -158,16 +177,7 @@ function TodoList() {
           <CompletedTasks />
         </div>
         <div className="player">
-          <iframe
-            width="560"
-            height="315"
-            src="https://www.youtube.com/embed/edn7FurOFxM?si=iNAbq6Qi3N9s8qFC"
-            title="YouTube video player"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allowfullscreen
-          ></iframe>
+            <img src={artcat} alt="art cat GIF by hoppip" style={{ width: "100%", height: "auto" }} />
         </div>
         <div className="main">
           <TodoItem addTask={addTask} />
