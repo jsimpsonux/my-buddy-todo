@@ -4,57 +4,56 @@ import "./todoList.css";
 import artcat from "../assets/artcat.gif";
 
 function TodoList() {
-  const [task, setTask] = useState([]);
+  const [tasks, setTasks] = useState([]);
   const [completed, setCompleted] = useState([]);
   const [progress, setProgress] = useState(0);
   const [hasReachedFive, setHasReachedFive] = useState(false);
 
   const addTask = (newTask) => {
-    setTask([...task, newTask]);
+    setTasks([...tasks, newTask]);
   };
 
   useEffect(() => {
-    setProgress((completed.length / task.length) * 100);
-  }, [completed, task]);
+    setProgress((completed.length / tasks.length) * 100);
+  }, [completed, tasks]);
 
   const DeleteTask = (index) => {
-    setTask(task.filter((_, i) => i !== index));
-    setProgress((completed.length / task.length) * 100);
-    setCompleted((prev) => {
-      return prev.filter((i) => i !== index);
-    });
+    setTasks(tasks.filter((_, i) => i !== index));
+    setProgress((completed.length / tasks.length) * 100);
+    setCompleted((prev) => prev.filter((i) => i !== index));
   };
 
   const TaskDone = (index) => {
-    setCompleted((prev) => {
-      if (prev.includes(index)) {
-        return prev.filter((i) => i !== index);
-      } else {
-        return [...prev, index];
-      }
-    });
+    setCompleted((prev) =>
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
+    );
   };
 
   useEffect(() => {
-    if (task.length >= 5 && !hasReachedFive) {
+    if (tasks.length >= 5 && !hasReachedFive) {
       setHasReachedFive(true);
     }
-  }, [task, hasReachedFive]);
+  }, [tasks, hasReachedFive]);
 
-  const CompletedTasks = () => {
-    return (
-      <>
-        <div className="completed-tasks">
-          <h4>Completed Tasks</h4>
-          <ul>
-            {completed.map((index) => (
-              <li key={index}>{task[index]}</li>
-            ))}
-          </ul>
-        </div>
-      </>
-    );
-  };
+  const CompletedTasks = () => (
+    <div className="completed-tasks">
+      <h4>Completed Tasks</h4>
+      <ul>
+        {completed.map((index) => (
+          <li key={index}>
+            {tasks[index]?.title}
+            {tasks[index]?.dueDate && (
+              <span
+                style={{ marginLeft: "10px", fontSize: "0.8em", color: "#666" }}
+              >
+                — Due {new Date(tasks[index].dueDate).toLocaleString()}
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 
   const Experience = ({ completed = [] }) => {
     const [experience, setExperience] = useState(0);
@@ -65,61 +64,23 @@ function TodoList() {
     console.log(level);
 
     useEffect(() => {
-      if (completed.length > 0) {
-        setExperience(completed.length * 10);
-      } else {
-        setExperience(0);
-      }
+      setExperience(completed.length * 10);
     }, [completed]);
 
     useEffect(() => {
       if (experience > 100 && !levelUp) {
         setLevelUp(true);
-        setLevel((prevlevel) => prevlevel + 1);
-        setExperience((prevExperience) => prevExperience - completed.length);
+        setLevel((prev) => prev + 1);
+        setExperience((prev) => prev - completed.length);
       }
-    }, [completed, level, experience, levelUp]);
+    }, [experience, completed, levelUp]);
 
     return (
-      <div
-        className="progress-container"
-        style={{
-          width: "50%",
-          background: "#ddd",
-          borderRadius: "10px",
-          padding: "5px",
-        }}
-      >
-        <div
-          className="progress-bar"
-          style={{
-            width: `${level}%`,
-            height: "20px",
-            background: "green",
-            borderRadius: "10px",
-            transition: "width 0.5s ease-in-out",
-          }}
-        />
-        <div
-          style={{ textAlign: "center", marginTop: "5px", fontWeight: "bold" }}
-        >
-          {level}
-        </div>
-        <div
-          className="progress-bar"
-          style={{
-            width: `${experience}%`,
-            height: "20px",
-            background: "green",
-            borderRadius: "10px",
-            transition: "width 0.5s ease-in-out",
-          }}
-        />
-        <div
-          style={{ textAlign: "center", marginTop: "5px", fontWeight: "bold" }}
-        >
-          {experience}
-        </div>
+      <div className="progress-container" style={progressContainerStyle}>
+        <div style={{ ...progressBarStyle, width: `${level}%` }} />
+        <div style={labelStyle}>{level}</div>
+        <div style={{ ...progressBarStyle, width: `${experience}%` }} />
+        <div style={labelStyle}>{experience}</div>
       </div>
     );
   };
@@ -128,37 +89,16 @@ function TodoList() {
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
-      if (task.length > 0) {
-        setProgress((completed.length / task.length) * 100);
-      } else {
-        setProgress(0);
-      }
-    }, [completed, task]);
+      setProgress(
+        tasks.length > 0 ? (completed.length / tasks.length) * 100 : 0
+      );
+    }, [completed, tasks]);
 
     return (
-      <div
-        className="progress-container"
-        style={{
-          width: "50%",
-          background: "#ddd",
-          borderRadius: "10px",
-          padding: "5px",
-        }}
-      >
-        <div
-          className="progress-bar"
-          style={{
-            width: `${progress}%`,
-            height: "20px",
-            background: "green",
-            borderRadius: "10px",
-            transition: "width 0.5s ease-in-out",
-          }}
-        />
-        <div
-          style={{ textAlign: "center", marginTop: "5px", fontWeight: "bold" }}
-        >
-          {completed.length} / {task.length}
+      <div className="progress-container" style={progressContainerStyle}>
+        <div style={{ ...progressBarStyle, width: `${progress}%` }} />
+        <div style={labelStyle}>
+          {completed.length} / {tasks.length}
         </div>
       </div>
     );
@@ -170,27 +110,46 @@ function TodoList() {
         <h2>My To-Do List</h2>
         <h4>Let's start easy. Add 5 tasks to get started.</h4>
         <Experience completed={completed} />
-        <LevelUp completed={completed} task={task} />
+        <LevelUp completed={completed} tasks={tasks} />
       </div>
+
       <div className="todo-list">
         <div className="completed">
           <CompletedTasks />
         </div>
+
         <div className="player">
-            <img src={artcat} alt="art cat GIF by hoppip" style={{ width: "100%", height: "auto" }} />
+          <img
+            src={artcat}
+            alt="art cat GIF by hoppip"
+            style={{ width: "100%", height: "auto" }}
+          />
         </div>
+
         <div className="main">
           <TodoItem addTask={addTask} />
+
           <ul className="items">
-            {task.map((tasks, index) => {
+            {tasks.map((task, index) => {
               const isCompleted = completed.includes(index);
-              const taskColour = isCompleted
+              const taskStyle = isCompleted
                 ? { color: "green", textDecoration: "line-through" }
                 : { color: "black" };
 
               return (
-                <li key={index} style={taskColour}>
-                  {tasks}
+                <li key={index} style={taskStyle}>
+                  {task.title}
+                  {task.dueDate && (
+                    <span
+                      style={{
+                        marginLeft: "10px",
+                        fontSize: "0.8em",
+                        color: "#666",
+                      }}
+                    >
+                      — Due {new Date(task.dueDate).toLocaleString()}
+                    </span>
+                  )}
                   <input
                     type="checkbox"
                     onChange={() => DeleteTask(index)}
@@ -211,5 +170,24 @@ function TodoList() {
     </>
   );
 }
+const progressContainerStyle = {
+  width: "50%",
+  background: "#ddd",
+  borderRadius: "10px",
+  padding: "5px",
+};
+
+const progressBarStyle = {
+  height: "20px",
+  background: "green",
+  borderRadius: "10px",
+  transition: "width 0.5s ease-in-out",
+};
+
+const labelStyle = {
+  textAlign: "center",
+  marginTop: "5px",
+  fontWeight: "bold",
+};
 
 export default TodoList;
