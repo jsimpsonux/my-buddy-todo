@@ -35,53 +35,72 @@ function TodoList() {
     }
   }, [tasks, hasReachedFive]);
 
-  const CompletedTasks = () => (
-    <div className="completed-tasks">
-      <h4>Completed Tasks</h4>
-      <ul>
-        {completed.map((index) => (
-          <li key={index}>
-            {tasks[index]?.title}
-            {tasks[index]?.dueDate && (
-              <span
-                style={{ marginLeft: "10px", fontSize: "0.8em", color: "#666" }}
-              >
-                — Due {new Date(tasks[index].dueDate).toLocaleString()}
-              </span>
-            )}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+  const CompletedTasks = ({ tasks, completed }) => {
+    return (
+      <div>
+        <h3>Completed Tasks</h3>
+        <ul>
+          {completed.map((index) => {
+            const task = tasks[index];
+            return (
+              <li key={index}>
+                {task.title}
+                {task.dueDate && (
+                  <span
+                    style={{
+                      marginLeft: "10px",
+                      fontSize: "0.8em",
+                      color: "#999",
+                    }}
+                  >
+                    — Due {new Date(task.dueDate).toLocaleString()}
+                  </span>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    );
+  };
 
   const Experience = ({ completed = [] }) => {
     const [experience, setExperience] = useState(0);
     const [level, setLevel] = useState(0);
-    const [levelUp, setLevelUp] = useState(false);
-
-    console.log(experience);
-    console.log(level);
 
     useEffect(() => {
-      setExperience(completed.length * 10);
+      const totalXP = completed.length * 10;
+      const newLevel = Math.floor(totalXP / 100);
+      const currentXP = totalXP % 100;
+
+      setLevel(newLevel);
+      setExperience(currentXP);
     }, [completed]);
 
-    useEffect(() => {
-      if (experience > 100 && !levelUp) {
-        setLevelUp(true);
-        setLevel((prev) => prev + 1);
-        setExperience((prev) => prev - completed.length);
-      }
-    }, [experience, completed, levelUp]);
-
     return (
-      <div className="progress-container" style={progressContainerStyle}>
-        <div style={{ ...progressBarStyle, width: `${level}%` }} />
-        <div style={labelStyle}>{level}</div>
-        <div style={{ ...progressBarStyle, width: `${experience}%` }} />
-        <div style={labelStyle}>{experience}</div>
-      </div>
+      <>
+        <div className="progress-container" style={progressContainerStyle}>
+          <div style={labelStyle}>
+            <p>Level</p>
+          </div>
+          <div
+            style={{ ...progressBarStyle, width: `${Math.min(level, 100)}%` }}
+          />
+          <div style={labelStyle}>{level}</div>
+        </div>
+        <div className="progress-container" style={progressContainerStyle}>
+          <div style={labelStyle}>
+            <p>Experience</p>
+          </div>
+          <div
+            style={{
+              ...progressBarStyle,
+              width: `${Math.min(experience, 100)}%`,
+            }}
+          />
+          <div style={labelStyle}>{experience}</div>
+        </div>
+      </>
     );
   };
 
@@ -115,7 +134,7 @@ function TodoList() {
 
       <div className="todo-list">
         <div className="completed">
-          <CompletedTasks />
+          <CompletedTasks tasks={tasks} completed={completed} />
         </div>
 
         <div className="player">
@@ -132,12 +151,11 @@ function TodoList() {
           <ul className="items">
             {tasks.map((task, index) => {
               const isCompleted = completed.includes(index);
-              const taskStyle = isCompleted
-                ? { color: "green", textDecoration: "line-through" }
-                : { color: "black" };
+
+              if (isCompleted) return null;
 
               return (
-                <li key={index} style={taskStyle}>
+                <li key={index} style={{ color: "black" }}>
                   {task.title}
                   {task.dueDate && (
                     <span

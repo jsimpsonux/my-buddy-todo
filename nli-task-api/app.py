@@ -20,7 +20,6 @@ def parse_task(text):
     normalized_text = ' '.join(normalized_text.split())
     logging.debug(f"Normalized text for parsing: {normalized_text}")
 
-
     found_dates = search_dates(
         normalized_text,
         settings={
@@ -35,17 +34,23 @@ def parse_task(text):
     cleaned = normalized_text
 
     if found_dates:
+        selected = None
+        for phrase, dt in reversed(found_dates):
+            if dt.hour != 0 or dt.minute != 0:
+                selected = (phrase, dt)
+                break
 
-        date_phrase, date_obj = found_dates[-1]
+        if not selected:
+            selected = found_dates[-1]
+
+        date_phrase, date_obj = selected
         logging.debug(f"Selected date phrase: {date_phrase} -> {date_obj}")
-
 
         if date_obj < datetime.now():
             date_obj += timedelta(days=1)
-            logging.debug("Date was in the past — shifted one day forward.")
+            logging.debug("Parsed date is in the past. Adjusting forward 1 day.")
 
         due_date = date_obj
-
 
         cleaned = normalized_text.replace(date_phrase, '').strip()
         cleaned = re.sub(r'\s{2,}', ' ', cleaned)
