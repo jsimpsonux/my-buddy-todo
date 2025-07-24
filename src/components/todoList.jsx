@@ -8,6 +8,15 @@ function TodoList() {
   const [completed, setCompleted] = useState([]);
   const [progress, setProgress] = useState(0);
   const [hasReachedFive, setHasReachedFive] = useState(false);
+  const [encouragingMessage, setEncouragingMessage] = useState("");
+
+  const messages = [
+    "Nice job! 🎉",
+    "You're on fire! 🔥",
+    "Keep going! 💪",
+    "Task smashed! 💥",
+    "One step closer to greatness! 🚀",
+  ];
 
   const addTask = (newTask) => {
     setTasks([...tasks, newTask]);
@@ -24,9 +33,22 @@ function TodoList() {
   };
 
   const TaskDone = (index) => {
-    setCompleted((prev) =>
-      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
-    );
+    setCompleted((prev) => {
+      const isAlreadyCompleted = prev.includes(index);
+      const updated = isAlreadyCompleted
+        ? prev.filter((i) => i !== index)
+        : [...prev, index];
+
+      if (!isAlreadyCompleted) {
+        const randomMessage =
+          messages[Math.floor(Math.random() * messages.length)];
+        setEncouragingMessage(randomMessage);
+
+        setTimeout(() => setEncouragingMessage(""), 10000);
+      }
+
+      return updated;
+    });
   };
 
   useEffect(() => {
@@ -138,6 +160,19 @@ function TodoList() {
         </div>
 
         <div className="player">
+          {encouragingMessage && (
+            <div
+              style={{
+                fontSize: "1.2em",
+                fontWeight: "bold",
+                marginBottom: "10px",
+                textAlign: "center",
+                color: "#4CAF50",
+              }}
+            >
+              {encouragingMessage}
+            </div>
+          )}
           <img
             src={artcat}
             alt="art cat GIF by hoppip"
